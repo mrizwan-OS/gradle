@@ -28,10 +28,26 @@ import org.gradle.jvm.toolchain.internal.DefaultJavaLanguageVersion;
 @HasInternalProtocol
 public interface JavaLanguageVersion extends Comparable<JavaLanguageVersion> {
 
+    /**
+     * Creates a {@code JavaLanguageVersion} for the given version number.
+     *
+     * @param version a positive integer representing the Java language version (e.g., {@code 17} for Java 17)
+     * @return the {@code JavaLanguageVersion} for the given version
+     * @throws IllegalArgumentException if the version is negative or zero
+     */
     static JavaLanguageVersion of(int version) {
         return DefaultJavaLanguageVersion.of(version);
     }
 
+    /**
+     * Creates a {@code JavaLanguageVersion} from the given string representation.
+     * <p>
+     * The string must be parseable as a positive integer (e.g., {@code "17"} or {@code "21"}).
+     *
+     * @param version a string representation of the Java language version
+     * @return the {@code JavaLanguageVersion} for the given version
+     * @throws IllegalArgumentException if the string cannot be parsed as a positive integer
+     */
     static JavaLanguageVersion of(String version) {
         try {
             return of(Integer.parseInt(version));
