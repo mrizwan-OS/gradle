@@ -29,7 +29,35 @@ import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Metadata describing a JVM installation discovered on the local machine.
+ * <p>
+ * Implementations come in two flavours:
+ * <ul>
+ *   <li>{@link DefaultJvmInstallationMetadata} — a valid installation whose properties can be queried freely.</li>
+ *   <li>{@link FailureInstallationMetadata} — an installation that could not be probed; only
+ *       {@link #getJavaHome()}, {@link #getErrorMessage()}, {@link #getErrorCause()},
+ *       {@link #getDisplayName()}, {@link #getCapabilities()}, and {@link #isValidInstallation()}
+ *       are safe to call.</li>
+ * </ul>
+ * Use {@link #isValidInstallation()} to distinguish between them before calling property accessors.
+ */
 public interface JvmInstallationMetadata {
+
+    /**
+     * Creates metadata for a successfully probed JVM installation.
+     *
+     * @param javaHome      the root directory of the installation
+     * @param javaVersion   raw value of the {@code java.version} system property
+     * @param javaVendor    raw value of the {@code java.vendor} system property
+     * @param runtimeName   raw value of the {@code java.runtime.name} system property
+     * @param runtimeVersion raw value of the {@code java.runtime.version} system property
+     * @param jvmName       raw value of the {@code java.vm.name} system property
+     * @param jvmVersion    raw value of the {@code java.vm.version} system property
+     * @param jvmVendor     raw value of the {@code java.vm.vendor} system property
+     * @param architecture  raw value of the {@code os.arch} system property
+     * @return a valid {@link DefaultJvmInstallationMetadata}
+     */
     static DefaultJvmInstallationMetadata from(
         File javaHome,
         String javaVersion,
@@ -44,14 +72,31 @@ public interface JvmInstallationMetadata {
         return new DefaultJvmInstallationMetadata(javaHome, javaVersion, javaVendor, runtimeName, runtimeVersion, jvmName, jvmVersion, jvmVendor, architecture);
     }
 
+    /**
+     * Creates metadata representing a failed probe attempt described by a plain error message.
+     *
+     * @param javaHome     the root directory that was probed
+     * @param errorMessage human-readable description of the failure
+     * @return a {@link FailureInstallationMetadata} for the given home
+     */
     static JvmInstallationMetadata failure(File javaHome, String errorMessage) {
         return new FailureInstallationMetadata(javaHome, errorMessage, null);
     }
 
+    /**
+     * Creates metadata representing a failed probe attempt caused by an exception.
+     *
+     * @param javaHome the root directory that was probed
+     * @param cause    the exception that caused the probe to fail
+     * @return a {@link FailureInstallationMetadata} for the given home
+     */
     static JvmInstallationMetadata failure(File javaHome, Exception cause) {
         return new FailureInstallationMetadata(javaHome, cause.getMessage(), cause);
     }
 
+    /**
+     * Returns the root directory of this JVM installation (i.e., {@code JAVA_HOME}).
+     */
     Path getJavaHome();
 
     /**
@@ -106,14 +151,43 @@ public interface JvmInstallationMetadata {
      */
     String getArchitecture();
 
+    /**
+     * Returns a human-readable display name for this installation (e.g., {@code "Eclipse Temurin JDK 21 (21.0.3+9)"}).
+     * <p>
+     * Safe to call on both valid and failed installations.
+     */
     String getDisplayName();
 
+    /**
+     * Returns the set of {@link JavaInstallationCapability capabilities} present in this installation.
+     * <p>
+     * Always returns an empty set for failed installations.
+     */
     Set<JavaInstallationCapability> getCapabilities();
 
+    /**
+     * Returns the error message when the installation could not be probed.
+     * <p>
+     * Throws {@link UnsupportedOperationException} on valid installations.
+     *
+     * @see #isValidInstallation()
+     */
     String getErrorMessage();
 
+    /**
+     * Returns the exception that caused this installation to fail probing, or {@code null} if the
+     * failure was recorded as a plain message.
+     * <p>
+     * Throws {@link UnsupportedOperationException} on valid installations.
+     *
+     * @see #isValidInstallation()
+     */
     Throwable getErrorCause();
 
+    /**
+     * Returns {@code true} if the installation was successfully probed and its metadata properties
+     * can be queried, {@code false} if probing failed.
+     */
     boolean isValidInstallation();
 
     class DefaultJvmInstallationMetadata implements JvmInstallationMetadata {

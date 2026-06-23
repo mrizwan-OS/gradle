@@ -37,14 +37,32 @@ public abstract class JvmVendorSpec {
      */
     public static final JvmVendorSpec ADOPTIUM = matching(KnownJvmVendor.ADOPTIUM);
 
+    /**
+     * A constant for using <a href="https://adoptopenjdk.net">AdoptOpenJDK</a> as the JVM vendor.
+     *
+     * @deprecated AdoptOpenJDK has been superseded by Eclipse Temurin. Prefer {@link #ADOPTIUM}.
+     */
+    @Deprecated
     public static final JvmVendorSpec ADOPTOPENJDK = matching(KnownJvmVendor.ADOPTOPENJDK);
 
+    /**
+     * A constant for using <a href="https://aws.amazon.com/corretto">Amazon Corretto</a> as the JVM vendor.
+     */
     public static final JvmVendorSpec AMAZON = matching(KnownJvmVendor.AMAZON);
 
+    /**
+     * A constant for using Apple's JVM as the JVM vendor (macOS legacy, pre-Java 7).
+     */
     public static final JvmVendorSpec APPLE = matching(KnownJvmVendor.APPLE);
 
+    /**
+     * A constant for using <a href="https://www.azul.com/downloads/">Azul Zulu</a> as the JVM vendor.
+     */
     public static final JvmVendorSpec AZUL = matching(KnownJvmVendor.AZUL);
 
+    /**
+     * A constant for using <a href="https://bell-sw.com/">BellSoft Liberica JDK</a> as the JVM vendor.
+     */
     public static final JvmVendorSpec BELLSOFT = matching(KnownJvmVendor.BELLSOFT);
 
     /**
@@ -54,8 +72,14 @@ public abstract class JvmVendorSpec {
      */
     public static final JvmVendorSpec GRAAL_VM = matching(KnownJvmVendor.GRAAL_VM);
 
+    /**
+     * A constant for using Hewlett-Packard's JVM as the JVM vendor (HP-UX platform).
+     */
     public static final JvmVendorSpec HEWLETT_PACKARD = matching(KnownJvmVendor.HEWLETT_PACKARD);
 
+    /**
+     * A constant for using <a href="https://www.ibm.com/semeru-runtimes">IBM Semeru Runtime</a> (formerly IBM J9) as the JVM vendor.
+     */
     public static final JvmVendorSpec IBM = matching(KnownJvmVendor.IBM);
 
     /**
@@ -73,8 +97,14 @@ public abstract class JvmVendorSpec {
      */
     public static final JvmVendorSpec MICROSOFT = matching(KnownJvmVendor.MICROSOFT);
 
+    /**
+     * A constant for using <a href="https://www.oracle.com/java/">Oracle JDK</a> as the JVM vendor.
+     */
     public static final JvmVendorSpec ORACLE = matching(KnownJvmVendor.ORACLE);
 
+    /**
+     * A constant for using <a href="https://sap.github.io/SapMachine/">SAP SapMachine</a> as the JVM vendor.
+     */
     public static final JvmVendorSpec SAP = matching(KnownJvmVendor.SAP);
 
     /**

@@ -22,8 +22,25 @@ import org.gradle.internal.service.scopes.ServiceScope;
 import java.util.Set;
 import java.util.function.Supplier;
 
+/**
+ * Strategy interface for discovering JVM installation locations on the local machine.
+ * <p>
+ * Each implementation is responsible for a single discovery mechanism (e.g., reading an
+ * environment variable, scanning a well-known OS directory, or querying a version manager).
+ * Implementations are registered as build-scoped services and called once per build to
+ * collect the full set of candidate toolchain locations.
+ * <p>
+ * The {@link #get()} method (inherited from {@link Supplier}) returns the discovered
+ * {@link InstallationLocation} set, which may be empty when no installations are found.
+ * The {@link #getSourceName()} string is used in diagnostics and display names.
+ */
 @ServiceScope(Scope.Build.class)
 public interface InstallationSupplier extends Supplier<Set<InstallationLocation>> {
 
+    /**
+     * Returns a short human-readable label that identifies this supplier's detection mechanism
+     * (e.g., {@code "environment variable 'JAVA_HOME'"} or {@code "Jabba"}).
+     * Used in {@link InstallationLocation#getSource()} display names and warning messages.
+     */
     String getSourceName();
 }

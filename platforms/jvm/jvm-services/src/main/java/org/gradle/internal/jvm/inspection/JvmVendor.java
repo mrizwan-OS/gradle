@@ -18,8 +18,22 @@ package org.gradle.internal.jvm.inspection;
 
 import java.util.regex.Pattern;
 
+/**
+ * Represents the vendor of a JVM installation, wrapping the raw {@code java.vendor} system property.
+ * <p>
+ * Instances are obtained via {@link #fromString(String)}. The {@link #getKnownVendor()} method maps
+ * the raw value to a well-known {@link KnownJvmVendor} constant, or {@link KnownJvmVendor#UNKNOWN}
+ * when no match can be found.
+ */
 public interface JvmVendor {
 
+    /**
+     * Enumeration of JVM vendors that Gradle recognises by name.
+     * <p>
+     * Each constant carries an <em>indicator string</em> (the canonical form used for matching),
+     * a regex pattern applied to the raw {@code java.vendor} value, and a human-readable display
+     * name. Use {@link #UNKNOWN} as the sentinel for unrecognised vendors.
+     */
     enum KnownJvmVendor {
         ADOPTIUM("adoptium", "temurin|adoptium|eclipse foundation", "Eclipse Temurin"),
         ADOPTOPENJDK("adoptopenjdk", "aoj|adoptopenjdk", "AdoptOpenJDK"),
@@ -80,12 +94,33 @@ public interface JvmVendor {
         }
     }
 
+    /**
+     * Returns the raw, unmodified value of the {@code java.vendor} system property for this installation.
+     */
     String getRawVendor();
 
+    /**
+     * Maps the raw vendor string to a {@link KnownJvmVendor} constant.
+     * Returns {@link KnownJvmVendor#UNKNOWN} when no known vendor matches.
+     */
     KnownJvmVendor getKnownVendor();
 
+    /**
+     * Returns a human-readable display name for this vendor (e.g., {@code "Eclipse Temurin"} or
+     * the raw vendor string for unknown vendors).
+     */
     String getDisplayName();
 
+    /**
+     * Creates a {@link JvmVendor} by wrapping the given raw vendor string.
+     * <p>
+     * The returned instance performs pattern matching lazily — the raw string is stored as-is and
+     * {@link #getKnownVendor()} resolves the {@link KnownJvmVendor} on demand.
+     *
+     * @param vendor the raw value of the {@code java.vendor} system property; may be {@code null},
+     *               in which case {@link #getKnownVendor()} returns {@link KnownJvmVendor#UNKNOWN}
+     * @return a {@link JvmVendor} wrapping the given string
+     */
     static JvmVendor fromString(String vendor) {
         return new JvmVendor() {
 
